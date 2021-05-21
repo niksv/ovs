@@ -851,6 +851,12 @@ struct udp_header {
 };
 BUILD_ASSERT_DECL(UDP_HEADER_LEN == sizeof(struct udp_header));
 
+#define UDP_PAYLOAD_LEN 8
+struct udp_payload {
+    ovs_be64 payload;
+};
+BUILD_ASSERT_DECL(UDP_PAYLOAD_LEN == sizeof(struct udp_payload));
+
 #define ESP_HEADER_LEN 8
 struct esp_header {
     ovs_be32 spi;

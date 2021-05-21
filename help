@@ -1,0 +1,35 @@
+OVS_BRANCH=branch-2.15
+OVS_VERSION=2.15
+DISTRO=ubuntu:20.04
+KERNEL_VERSION=5.8.0-53-generic
+GITHUB_SRC=<GITHUB_URL>
+DOCKER_REPO=<REPO_TO_PUSH_IMAGE>
+
+
+
+docker run -itd --net=host --name=ovsdb-server openvswitch/ovs:2.15_debian_5.8.0-53-generic ovsdb-server
+docker run -itd --net=host --name=ovs-vswitchd --volumes-from=ovsdb-server -v /lib:/lib --privileged openvswitch/ovs:2.15_debian_5.8.0-53-generic ovs-vswitchd
+
+docker exec -it ovs-vswitchd /bin/bash
+ovs-vsctl add-br ofsw15
+ovs-vsctl del-controller ofsw15
+ovs-vsctl set-controller ofsw15 tcp:172.22.0.12:6653
+ovs-vsctl list controller
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=3000,in_port=11,actions=move:OPKOXM_OF_TIMESTAMP[0..47]->NXM_OF_ETH_DST[],output=controller"
+ovs-ofctl -O OpenFlow13 dump-flows ofsw15
+
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=3000,in_port=11,actions=move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[],output=controller"
+ovs-ofctl -O OpenFlow13 dump-flows ofsw15
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=3000,in_port=11,actions=move:OPKOXM_OF_TIMESTAMP[]->OPKOXM_OF_UDP_PAYLOAD[0..63],output=controller"
+ovs-ofctl -O OpenFlow13 dump-flows ofsw15
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=3000,in_port=11,actions=move:OPKOXM_OF_TIMESTAMP[0..47]->NXM_OF_ETH_DST[],output=controller"
+ovs-ofctl -O OpenFlow13 dump-flows ofsw15
+
+
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=2000,in_port=11,actions=move:NXM_OF_ETH_SRC[]->NXM_OF_ETH_DST[],output:controller"
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=3000,in_port=11,actions=move:OPKOXM_OF_TIMESTAMP[0..47]->NXM_OF_ETH_DST[],output=controller"
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=3000,in_port=11,actions=move:OPKOXM_OF_TIMESTAMP[1..63]->OPKOXM_OF_UDP_PAYLOAD[0..63],output=controller"
+
+
+
+ovs-ofctl -O OpenFlow13 add-flow ofsw15 "priority=3000,in_port=11,actions=move:OPKOXM_OF_UDP_PAYLOAD[0..47]->NXM_OF_ETH_DST[0..47],output=controller"

@@ -2563,6 +2563,19 @@ actions=clone(load:0->NXM_OF_IN_PORT[],output:123)
       </p>
     </field>
 
+    <field id="MFF_OPK_TIMESTAMP"
+           title="Open Kilda packet receive timestamp"/>
+    <p>
+      Field contains receive timestamp. Length of the filed is 64 bits.
+      First 32 bits contains epoch timestamp in seconds.
+      Second 32 bits contains count of nanoseconds, passed from epoch
+      timestamp to receive time.
+    </p>
+    <field id="MFF_OPK_UDP_PAYLOAD"
+           title="Open Kilda UDP packer payload"/>
+    <p>
+      Field contains payload of UDP packet.
+    </p>
   </group>
 
   <group title="Connection Tracking">
