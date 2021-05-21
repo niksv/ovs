@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openvswitch/vlog.h>
 #include "byte-order.h"
 #include "colors.h"
 #include "coverage.h"
@@ -44,6 +45,8 @@
 #include "openvswitch/nsh.h"
 #include "ovs-router.h"
 #include "lib/netdev-provider.h"
+
+VLOG_DEFINE_THIS_MODULE(flow);
 
 COVERAGE_DEFINE(flow_extract);
 COVERAGE_DEFINE(miniflow_malloc);
@@ -737,6 +740,15 @@ miniflow_extract(struct dp_packet *packet, struct miniflow *dst)
     const void *data = dp_packet_data(packet);
     size_t size = dp_packet_size(packet);
     ovs_be32 packet_type = packet->packet_type;
+    struct ds s;
+    VLOG_WARN("MY WARN LOOOOOOOOOOG");
+
+    ds_init(&s);
+    ds_put_hex_dump(&s, data, size, 0, false);
+
+    VLOG_WARN("MYYYYYYYYYYY PACKET\n%s", ds_cstr(&s));
+    ds_destroy(&s);
+
     uint64_t *values = miniflow_values(dst);
     struct mf_ctx mf = { FLOWMAP_EMPTY_INITIALIZER, values,
                          values + FLOW_U64S };
