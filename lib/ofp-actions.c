@@ -265,7 +265,7 @@ enum ofp_raw_action_type {
 /* ## ------------------------- ## */
 /* ## Open Kilda extension actions. ## */
 /* ## ------------------------- ## */
-    /* ONF1.3-1.4(3201): struct onf_action_swap_field, ... VLMFF */
+    /* OPK1.3-1.4(3201): struct onf_action_swap_field, ... VLMFF */
     OPK_RAW13_SWAP_FIELD,
 
 /* ## ------------------------- ## */
