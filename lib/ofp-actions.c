@@ -265,7 +265,7 @@ enum ofp_raw_action_type {
 /* ## ------------------------- ## */
 /* ## Open Kilda extension actions. ## */
 /* ## ------------------------- ## */
-    /* OPK1.3-1.4(3201): struct onf_action_swap_field, ... VLMFF */
+    /* OPK1.3-1.4(3201): struct opk_action_swap_field, ... VLMFF */
     OPK_RAW13_SWAP_FIELD,
 
 /* ## ------------------------- ## */
@@ -2467,7 +2467,7 @@ struct onf_action_copy_field {
 };
 
 /* Action structure for OpenFlow 1.3 extension copy-field action.. */
-struct onf_action_swap_field {
+struct opk_action_swap_field {
     ovs_be16 type;              /* OFPAT_EXPERIMENTER. */
     ovs_be16 len;               /* Length is padded to 64 bits. */
     ovs_be32 experimenter;      /* ONF_VENDOR_ID. */
@@ -2683,7 +2683,7 @@ decode_OFPAT_RAW15_COPY_FIELD(const struct ofp15_action_copy_field *oacf,
 }
 
 static enum ofperr
-decode_OPK_RAW13_SWAP_FIELD(const struct onf_action_swap_field *oasf,
+decode_OPK_RAW13_SWAP_FIELD(const struct opk_action_swap_field *oasf,
                                enum ofp_version ofp_version OVS_UNUSED,
                                const struct vl_mff_map *vl_mff_map,
                                uint64_t *tlv_bitmap, struct ofpbuf *ofpacts)
@@ -2788,7 +2788,7 @@ encode_SWAP_FIELD(const struct ofpact_swap_field *move,
 {
     size_t start_ofs = out->size;
 
-    struct onf_action_swap_field *copy = put_OPK13_SWAP_FIELD(out);
+    struct opk_action_swap_field *copy = put_OPK13_SWAP_FIELD(out);
     copy->n_bits = htons(move->dst.n_bits);
     copy->src_offset = htons(move->src.ofs);
     copy->dst_offset = htons(move->dst.ofs);
@@ -9821,7 +9821,8 @@ ofpact_put_raw(struct ofpbuf *buf, enum ofp_version ofp_version,
         break;
 
     case NX_VENDOR_ID:
-    case ONF_VENDOR_ID: {
+    case ONF_VENDOR_ID:
+    case OPK_VENDOR_ID: {
         struct ext_action_header *nah = (struct ext_action_header *) oah;
         nah->subtype = htons(hdrs->type);
         break;
