@@ -2640,24 +2640,24 @@ decode_swap_field__(ovs_be16 src_offset, ovs_be16 dst_offset, ovs_be16 n_bits,
                     const struct vl_mff_map *vl_mff_map,
                     uint64_t *tlv_bitmap, struct ofpbuf *ofpacts)
 {
-    struct ofpact_swap_field *move = ofpact_put_SWAP_FIELD(ofpacts);
+    struct ofpact_swap_field *swap = ofpact_put_SWAP_FIELD(ofpacts);
     enum ofperr error;
 
-    move->ofpact.raw = ONFACT_RAW13_COPY_FIELD;
-    move->src.ofs = ntohs(src_offset);
-    move->src.n_bits = ntohs(n_bits);
-    move->dst.ofs = ntohs(dst_offset);
-    move->dst.n_bits = ntohs(n_bits);
+    swap->ofpact.raw = ONFACT_RAW13_COPY_FIELD;
+    swap->src.ofs = ntohs(src_offset);
+    swap->src.n_bits = ntohs(n_bits);
+    swap->dst.ofs = ntohs(dst_offset);
+    swap->dst.n_bits = ntohs(n_bits);
 
     struct ofpbuf b = ofpbuf_const_initializer(action, ntohs(action_len));
     ofpbuf_pull(&b, oxm_offset);
 
-    error = mf_vl_mff_nx_pull_header(&b, vl_mff_map, &move->src.field, NULL,
+    error = mf_vl_mff_nx_pull_header(&b, vl_mff_map, &swap->src.field, NULL,
                                      tlv_bitmap);
     if (error) {
         return error;
     }
-    error = mf_vl_mff_nx_pull_header(&b, vl_mff_map, &move->dst.field, NULL,
+    error = mf_vl_mff_nx_pull_header(&b, vl_mff_map, &swap->dst.field, NULL,
                                      tlv_bitmap);
     if (error) {
         return error;
@@ -2667,7 +2667,7 @@ decode_swap_field__(ovs_be16 src_offset, ovs_be16 dst_offset, ovs_be16 n_bits,
         return OFPERR_NXBRC_MUST_BE_ZERO;
     }
 
-    return nxm_swap_field_check(move, NULL);
+    return nxm_swap_field_check(swap, NULL);
 }
 
 static enum ofperr
@@ -2783,18 +2783,18 @@ encode_REG_MOVE(const struct ofpact_reg_move *move,
 }
 
 static void
-encode_SWAP_FIELD(const struct ofpact_swap_field *move,
+encode_SWAP_FIELD(const struct ofpact_swap_field *swap,
                 enum ofp_version ofp_version, struct ofpbuf *out)
 {
     size_t start_ofs = out->size;
 
     struct opk_action_swap_field *copy = put_OPK13_SWAP_FIELD(out);
-    copy->n_bits = htons(move->dst.n_bits);
-    copy->src_offset = htons(move->src.ofs);
-    copy->dst_offset = htons(move->dst.ofs);
+    copy->n_bits = htons(swap->dst.n_bits);
+    copy->src_offset = htons(swap->src.ofs);
+    copy->dst_offset = htons(swap->dst.ofs);
     out->size = out->size - sizeof copy->pad3;
-    nx_put_mff_header(out, move->src.field, ofp_version, false);
-    nx_put_mff_header(out, move->dst.field, ofp_version, false);
+    nx_put_mff_header(out, swap->src.field, ofp_version, false);
+    nx_put_mff_header(out, swap->dst.field, ofp_version, false);
 
     pad_ofpat(out, start_ofs);
 }
@@ -2824,8 +2824,8 @@ check_REG_MOVE(const struct ofpact_reg_move *a,
 static char * OVS_WARN_UNUSED_RESULT
 parse_SWAP_FIELD(const char *arg, const struct ofpact_parse_params *pp)
 {
-    struct ofpact_swap_field *move = ofpact_put_SWAP_FIELD(pp->ofpacts);
-    return nxm_parse_swap_field(move, arg);
+    struct ofpact_swap_field *swap = ofpact_put_SWAP_FIELD(pp->ofpacts);
+    return nxm_parse_swap_field(swap, arg);
 }
 
 
