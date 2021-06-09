@@ -2470,7 +2470,7 @@ struct onf_action_copy_field {
 struct opk_action_swap_field {
     ovs_be16 type;              /* OFPAT_EXPERIMENTER. */
     ovs_be16 len;               /* Length is padded to 64 bits. */
-    ovs_be32 experimenter;      /* ONF_VENDOR_ID. */
+    ovs_be32 experimenter;      /* OPK_VENDOR_ID. */
     ovs_be16 exp_type;          /* 3201. */
     uint8_t pad[2];             /* Not used. */
     ovs_be16 n_bits;            /* Number of bits to copy. */
